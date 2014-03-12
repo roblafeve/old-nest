@@ -1,0 +1,76 @@
+nest(ratio, bg, shift = 0, steps = 6)
+  dev        = true
+  class_name = "nest"
+  class_list = '.' + class_name + ' '
+  for step in (1...steps + 1)
+    unless step is 1
+      {class_list += '.' + class_name + ' '}
+    rank = steps - (step - shift)
+    size = (ratio**rank)em
+    {class_list}, {'$' + class_name}-{step}
+      padding size
+      if dev
+        // outline 1px solid rgba(bg, 50%)
+        background-color rgba(bg, 20%)
+      rank = steps - ((step + 1) - shift)
+      size = (ratio**rank)em
+      > *
+        margin-top size
+      .grid
+        margin-left  -(size)
+        margin-right -(size)
+      .grid-row
+        margin-top size
+        border-spacing size 0
+        > *
+          margin-top size
+      
+
+nest(3, slategray, -3.75)
+@media (max-width: 960px)
+  nest(1.25, slategray, -3)
+@media (max-width: 640px)
+  nest(1.15, slategray, -5)
+
+*:first-child
+  margin-top 0 !important
+
+[class*="nest"]
+  font inherit
+  &.nospace
+    padding 0 !important
+    border-spacing 0 !important
+    margin-top 0 !important
+    > *
+      margin-top 0 !important
+
+.grid
+  &.nospace
+    margin-left 0 !important
+    margin-right 0 !important
+    > .grid-row
+      border-spacing 0 !important
+      > .nest
+        margin-top 0 !important
+
+.grid-row
+  display table
+  table-layout fixed
+  width 100%
+
+  > *
+    display table-cell
+    vertical-align top
+    @media (max-width: 640px) {
+      display block
+    }
+
+.show
+  background-color rgba(white, 20%)
+
+input
+  @extend $nest-6
+  width 100%
+
+button
+  width 100%

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nest</title>
+  <link rel="stylesheet" href="nest.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      transition: all 0.25s ease-in-out;
+      margin-bottom: 0;
+    }
+    *:before,
+    *:after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font: 100%/1.5 "Helvetica Neue"
+    }
+    h1, h2, h3, h4, h5, h6 {
+      text-align: center;
+      font-weight: 200;
+      letter-spacing: 0.1em;
+    }
+    header {
+      overflow: hidden;
+    }
+  </style>
+  <script>document.write('<script src="http://' + (location.host || 'localhost')
+  .split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+</head>
+<body class="nest">
+
+  <header class="nest">Header</header>
+  <main class="grid">
+    <div class="grid-row">
+      <div class="sidebar nest">Sidebar</div>
+      <div class="content">
+        <header class="nest" style="background: blue">
+          <div class="grid">
+            <div class="grid-row">
+              <div class="nest nospace"><button>Button</button></div>
+              <div class="nest nospace"><button>Button</button></div>
+              <div class="nest nospace"><button>Button</button></div>
+            </div>
+          </div>
+        </header>
+        <div class="nest">
+          <div class="show">Content</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>
