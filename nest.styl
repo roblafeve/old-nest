@@ -1,76 +1,223 @@
-nest(ratio, bg, shift = 0, steps = 6)
-  dev        = true
+body {
+  margin: 0;
+  font: 100%/1.5 "Helvetica Neue";
+  height: 100%;
+  // position: absolute;
+  // overflow: hidden;
+}
+
+h1
+h2
+h3
+h4
+h5
+h6
+  line-height 1
+  font-weight 200
+
+dev       = true
+dev_color = teal
+
+// Vertical Spacing
+
+*
+  box-sizing border-box !important
+  margin-bottom 0
+  &:first-child:not(.state-hidden)
+    margin-top 0 !important
+  &:after,
+  &:after
+    box-sizing border-box
+
+// Nest Generator
+
+nest(ratio, shift = 0, steps = 6, bg)
   class_name = "nest"
   class_list = '.' + class_name + ' '
   for step in (1...steps + 1)
+    rank = steps - (step - shift)
+    size = (ratio**rank)rem
     unless step is 1
       {class_list += '.' + class_name + ' '}
-    rank = steps - (step - shift)
-    size = (ratio**rank)em
-    {class_list}, {'$' + class_name}-{step}
+    {class_list}
       padding size
       if dev
-        // outline 1px solid rgba(bg, 50%)
-        background-color rgba(bg, 20%)
+        background-color rgba(bg, 0.2)
+        transition all 0.25s ease-in-out
+        border 1px solid rgba(bg, 0.75)
+
+      // Adjust spacing size for children
       rank = steps - ((step + 1) - shift)
-      size = (ratio**rank)em
-      > *
+      size = (ratio**rank)rem
+      
+      *
         margin-top size
-      .grid
+
+      .grid-wrapper
         margin-left  -(size)
         margin-right -(size)
-      .grid-row
-        margin-top size
+
+      .grid
         border-spacing size 0
-        > *
-          margin-top size
-      
+        &.sub-spacing-full
+          border-spacing size
 
-nest(3, slategray, -3.75)
-@media (max-width: 960px)
-  nest(1.25, slategray, -3)
-@media (max-width: 640px)
-  nest(1.15, slategray, -5)
+// `.nest`
+// Purpose: Visually represents Nest Heirarchy via padding and top margin
+// Requirements: Must be present in actual markup/templates
 
-*:first-child
-  margin-top 0 !important
+nest(1.61803398875, -3, 6, dev_color)
 
-[class*="nest"]
-  font inherit
-  &.nospace
-    padding 0 !important
-    border-spacing 0 !important
-    margin-top 0 !important
-    > *
-      margin-top 0 !important
+.nest
+  display block
+
+  // `.nest` subclasses
+  // Purpose: To provide addition control while maintaining dynamic spacing
+
+  &.sub-v
+    padding-left   0 !important
+    padding-right  0 !important
+  &.sub-h
+    padding-top    0 !important
+    padding-bottom 0 !important 
+  &.sub-top
+    padding-right  0 !important
+    padding-bottom 0 !important
+    padding-left   0 !important
+  &.sub-right
+    padding-top    0 !important
+    padding-bottom 0 !important
+    padding-left   0 !important
+  &.sub-bottom
+    padding-top    0 !important
+    padding-right  0 !important
+    padding-left   0 !important
+  &.sub-left
+    padding-top    0 !important
+    padding-right  0 !important
+    padding-bottom 0 !important
+
+// `.grid-wrapper`
+// Purpose: Offsets border-spacing
+// Requirements: Must wrap `.grid` to ensure consistent spacing
+
+.grid-wrapper
+  vertical-align top
+  &.sub-no_offset
+    margin 0 !important
+  &.sub-inline
+    display inline-block
+
+// GRID - creates horizontal layout
 
 .grid
-  &.nospace
-    margin-left 0 !important
-    margin-right 0 !important
-    > .grid-row
-      border-spacing 0 !important
-      > .nest
-        margin-top 0 !important
-
-.grid-row
   display table
   table-layout fixed
+  vertical-align top
   width 100%
 
   > *
     display table-cell
-    vertical-align top
-    @media (max-width: 640px) {
-      display block
-    }
+    vertical-align inherit
 
-.show
-  background-color rgba(white, 20%)
+  &.sub-auto
+    table-layout auto
 
-input
-  @extend $nest-6
+  &.sub-wrap
+    display block
+    > * 
+      display inline-block
+
+  &.sub-align-middle
+    vertical-align middle
+
+  &.sub-collapse
+    width auto
+
+  &.sub-full_height
+    height 100%
+
+  &.sub-break_small
+    > .grid-row
+      > *
+        @media (max-width: 640px)
+          display block
+          width 100%
+
+.grid-rows
+  display table-row-group
+
+// GRID ROW - because table rows create dynamic vertical grids
+
+.grid-row
+  display table-row
   width 100%
 
-button
+  &.sub-collapse
+    height 1px
+
+  &.sub-full_height
+    height 100%
+
+  > *
+    display table-cell
+    vertical-align inherit
+
+.grid-row-scroll
+  position relative
   width 100%
+  height 100%
+@-moz-document url-prefix()
+  .grid-row-scroll
+    display block // explicitly set in case parent is row (for firefox)
+
+.grid-row-scroll-region
+  // @extend .scroll
+  position absolute
+  top 0
+  right 0
+  bottom 0
+  left 0
+
+// GRID COLUMN
+
+.grid-column
+  &.sub-fill
+    width 100%
+  &.sub-collapse
+    width 1px
+  &.sub-full_height
+    height 100%
+
+// Global Subclasses
+
+.sub-expand
+  width 100%
+  height 100%
+.sub-collapse
+  width 1px
+  height 1px
+.sub-no_spacing
+  margin-left      0 !important
+  margin-right     0 !important
+  > .nest
+    margin-top     0 !important
+  > .grid-wrapper
+    margin-top     0 !important
+    margin-left      0 !important
+    margin-right     0 !important
+    > .grid
+      margin-top     0 !important
+      border-spacing 0 !important
+  > .grid
+    margin-top     0 !important
+    border-spacing 0 !important
+
+.module
+  overflow hidden
+  border-radius 0.3em
+  border 1px solid rgba(dev_color, 0.75)
+  > *:first-child
+    border-top 0 !important
+  > *
+    border-width 1px 0 0 !important
