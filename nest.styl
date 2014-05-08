@@ -23,7 +23,7 @@ dev_color = teal
 *
   box-sizing border-box !important
   margin-bottom 0
-  &:first-child:not(.state-hidden)
+  &:first-child:not(.staff_member)
     margin-top 0 !important
   &:after,
   &:after
@@ -39,12 +39,12 @@ nest(ratio, shift = 0, steps = 6, bg)
     size = (ratio**rank)rem
     unless step is 1
       {class_list += '.' + class_name + ' '}
-    {class_list}
+    {class_list}, .nest-{step}
       padding size
       if dev
         background-color rgba(bg, 0.2)
         transition all 0.25s ease-in-out
-        border 1px solid rgba(bg, 0.75)
+        outline 1px solid rgba(bg, 0.75)
 
       // Adjust spacing size for children
       rank = steps - ((step + 1) - shift)
@@ -52,50 +52,86 @@ nest(ratio, shift = 0, steps = 6, bg)
       
       *
         margin-top size
+        &.sub-offset-top
+          margin-top -(size) !important
 
       .grid-wrapper
-        margin-left  -(size)
         margin-right -(size)
+        margin-left  -(size)
+        &.sub-inline
+          margin-top      size*0.5
+          margin-right  -(size*0.5)
+          margin-bottom -(size*0.5)
+          margin-left   -(size*0.5)
+          &:first-child
+            margin-top  -(size*0.5) !important
+          > .grid
+            display block
+            width auto
+            font-size 0
+            > *
+              font-size 1rem
+              display inline-block
+              margin 0
+              padding size*0.5
+              width 25%
 
       .grid
         border-spacing size 0
-        &.sub-spacing-full
+        &.sub-hv
           border-spacing size
 
 // `.nest`
 // Purpose: Visually represents Nest Heirarchy via padding and top margin
 // Requirements: Must be present in actual markup/templates
 
-nest(1.61803398875, -3, 6, dev_color)
+nest(1.6, -3, 6, dev_color)
+
+// NEST
 
 .nest
-  display block
+  display block // Ensures default block-level display.
 
-  // `.nest` subclasses
-  // Purpose: To provide addition control while maintaining dynamic spacing
+  // SUBCLASSES
+  // These provide addition control while maintaining dynamic spacing.
+  // The use of `!important` is necessary due to the high level of specificity
+  // associated with dynamic nesting (e.g. '.nest .nest .nest' always trumps '.nest.sub-x').
 
-  &.sub-v
+  &.sub-null       // negate padding
+    padding        0 !important
+  &.sub-v          // only padding top and bottom
     padding-left   0 !important
     padding-right  0 !important
-  &.sub-h
+  &.sub-h          // only padding right and left
     padding-top    0 !important
-    padding-bottom 0 !important 
-  &.sub-top
+    padding-bottom 0 !important
+  &.sub-top        // only padding top
     padding-right  0 !important
     padding-bottom 0 !important
     padding-left   0 !important
-  &.sub-right
+  &.sub-no-top     // no padding top
+    padding-top    0 !important
+  &.sub-right      // only padding right
     padding-top    0 !important
     padding-bottom 0 !important
     padding-left   0 !important
-  &.sub-bottom
+  &.sub-no-right   // no padding right
+    padding-right  0 !important
+  &.sub-bottom     // only padding bottom
     padding-top    0 !important
     padding-right  0 !important
     padding-left   0 !important
-  &.sub-left
+  &.sub-no-bottom  // no padding bottom
+    padding-bottom 0 !important
+  &.sub-left       // only padding left
     padding-top    0 !important
     padding-right  0 !important
     padding-bottom 0 !important
+  &.sub-no-left    // no padding left
+    padding-left   0 !important
+  &.sub-collapse-v // removes top margin from children
+    > *
+      margin-top   0
 
 // `.grid-wrapper`
 // Purpose: Offsets border-spacing
@@ -103,10 +139,16 @@ nest(1.61803398875, -3, 6, dev_color)
 
 .grid-wrapper
   vertical-align top
-  &.sub-no_offset
-    margin 0 !important
-  &.sub-inline
-    display inline-block
+  &.sub-offset-none
+    margin-right 0 !important
+    margin-left  0 !important
+  &.sub-collapse
+    margin-right 0 !important
+    margin-left  0 !important
+    > .grid
+      border-spacing 0 !important
+  // &.sub-inline
+  //   display inline-block
 
 // GRID - creates horizontal layout
 
@@ -144,10 +186,11 @@ nest(1.61803398875, -3, 6, dev_color)
           display block
           width 100%
 
-.grid-rows
-  display table-row-group
 
 // GRID ROW - because table rows create dynamic vertical grids
+
+.grid-rows
+  display table-row-group
 
 .grid-row
   display table-row
@@ -172,7 +215,8 @@ nest(1.61803398875, -3, 6, dev_color)
     display block // explicitly set in case parent is row (for firefox)
 
 .grid-row-scroll-region
-  // @extend .scroll
+  overflow auto
+  -webkit-overflow-scrolling touch
   position absolute
   top 0
   right 0
@@ -191,27 +235,79 @@ nest(1.61803398875, -3, 6, dev_color)
 
 // Global Subclasses
 
-.sub-expand
+.sub-expand-wh
   width 100%
   height 100%
-.sub-collapse
+.sub-collapse-wh
   width 1px
   height 1px
-.sub-no_spacing
-  margin-left      0 !important
-  margin-right     0 !important
-  > .nest
-    margin-top     0 !important
-  > .grid-wrapper
-    margin-top     0 !important
-    margin-left      0 !important
-    margin-right     0 !important
-    > .grid
-      margin-top     0 !important
-      border-spacing 0 !important
-  > .grid
-    margin-top     0 !important
-    border-spacing 0 !important
+.sub-collapse-v
+  > *
+    margin-top 0 !important
+    > .grid-row
+      > *
+        @media (max-width: 640px)
+          display block
+          width 100%
+
+
+// GRID ROW - because table rows create dynamic vertical grids
+
+.grid-rows
+  display table-row-group
+
+.grid-row
+  display table-row
+  width 100%
+
+  &.sub-collapse
+    height 1px
+
+  &.sub-full_height
+    height 100%
+
+  > *
+    display table-cell
+    vertical-align inherit
+
+.grid-row-scroll
+  position relative
+  width 100%
+  height 100%
+@-moz-document url-prefix()
+  .grid-row-scroll
+    display block // explicitly set in case parent is row (for firefox)
+
+.grid-row-scroll-region
+  overflow auto
+  -webkit-overflow-scrolling touch
+  position absolute
+  top 0
+  right 0
+  bottom 0
+  left 0
+
+// GRID COLUMN
+
+.grid-column
+  &.sub-fill
+    width 100%
+  &.sub-collapse
+    width 1px
+  &.sub-full_height
+    height 100%
+
+// Global Subclasses
+
+.sub-expand-wh
+  width 100%
+  height 100%
+.sub-collapse-wh
+  width 1px
+  height 1px
+.sub-collapse-v
+  > *
+    margin-top 0 !important
 
 .module
   overflow hidden
